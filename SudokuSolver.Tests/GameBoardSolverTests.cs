@@ -94,6 +94,46 @@ public class GameBoardSolverTests
     }
     
     [Test]
+    public void GivenSimplePuzzle2_SolvesIt()
+    {
+        var gameBoardString =
+            """
+            x 3 2 x x x 5 x 7
+            7 x 5 2 1 8 x x x
+            x x 6 x x 3 x x 4
+            3 x 8 x 6 2 x 4 5
+            x x 9 1 8 x x 7 x
+            x x x x x 4 2 9 x
+            x 8 4 x 3 1 x x x
+            2 x 7 x 4 9 x x x
+            x 1 x x x 7 4 5 9
+            """;
+        
+        var gameBoard = new GameBoardFactory().FromString(gameBoardString);
+        
+        var expectedSolvedGameBoardString =
+            """
+            8 3 2 4 9 6 5 1 7
+            7 4 5 2 1 8 9 3 6
+            1 9 6 7 5 3 8 2 4
+            3 7 8 9 6 2 1 4 5
+            4 2 9 1 8 5 6 7 3
+            5 6 1 3 7 4 2 9 8
+            9 8 4 5 3 1 7 6 2
+            2 5 7 6 4 9 3 8 1
+            6 1 3 8 2 7 4 5 9
+            """; 
+        
+        var expectedSolvedGameBoard = new GameBoardFactory().FromString(expectedSolvedGameBoardString);
+        
+        var result = new GameBoardSolver().Solve(gameBoard);
+
+        result.IsSolved().Should().BeTrue();
+        
+        result.BoardSpaces.Should().BeEquivalentTo(expectedSolvedGameBoard.BoardSpaces);
+    }
+    
+    [Test]
     [Ignore("Still improving the solving algorithm.")]
     public void GivenHardPuzzle_SolvesIt()
     {
