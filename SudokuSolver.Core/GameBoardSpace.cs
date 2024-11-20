@@ -8,17 +8,17 @@ public class GameBoardSpace
 
     public GameBoardSpace(int row, int column, int? value)
     {
-        if (row is < 0 or > 8)
+        if (row is < 0 or > GameLogic.RowCount - 1)
         {
             throw new ArgumentOutOfRangeException(nameof(row));
         }
         
-        if (column is < 0 or > 8)
+        if (column is < 0 or > GameLogic.ColumnCount - 1)
         {
             throw new ArgumentOutOfRangeException(nameof(column));
         }
         
-        if (value is < 1 or > 9)
+        if (value.HasValue && !GameLogic.PossibleValues.Contains(value.Value))
         {
             throw new ArgumentOutOfRangeException(nameof(value));
         }

@@ -24,7 +24,7 @@ public class GameBoardSolverTests
         
         var gameBoard = new GameBoardFactory().FromString(gameBoardString);
 
-        var result = new GameBoardSolver().Solve(gameBoard);
+        var result = GameBoardSolver.Solve(gameBoard);
 
         result.Should().BeSameAs(gameBoard);
     }
@@ -47,7 +47,7 @@ public class GameBoardSolverTests
         
         var gameBoard = new GameBoardFactory().FromString(gameBoardString);
 
-        var result = new GameBoardSolver().Solve(gameBoard);
+        var result = GameBoardSolver.Solve(gameBoard);
 
         result.IsSolved().Should().BeTrue();
         result.GetSpace(0, 0).Value.Should().Be(4);
@@ -86,7 +86,7 @@ public class GameBoardSolverTests
         
         var expectedSolvedGameBoard = new GameBoardFactory().FromString(expectedSolvedGameBoardString);
 
-        var result = new GameBoardSolver().Solve(gameBoard);
+        var result = GameBoardSolver.Solve(gameBoard);
 
         result.IsSolved().Should().BeTrue();
 
@@ -126,7 +126,7 @@ public class GameBoardSolverTests
         
         var expectedSolvedGameBoard = new GameBoardFactory().FromString(expectedSolvedGameBoardString);
         
-        var result = new GameBoardSolver().Solve(gameBoard);
+        var result = GameBoardSolver.Solve(gameBoard);
 
         result.IsSolved().Should().BeTrue();
         
@@ -153,7 +153,7 @@ public class GameBoardSolverTests
         
         var gameBoard = new GameBoardFactory().FromString(gameBoardString);
         
-        var result = new GameBoardSolver().Solve(gameBoard);
+        var result = GameBoardSolver.Solve(gameBoard);
 
         result.IsSolved().Should().BeTrue();
     }
