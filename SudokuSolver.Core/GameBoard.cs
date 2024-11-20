@@ -1,9 +1,38 @@
-﻿namespace SudokuSolver.Core;
+﻿using System.Text;
 
-public class GameBoard(GameBoardSpace[] boardSpaces)
+namespace SudokuSolver.Core;
+
+public class GameBoard
 {
-    private GameBoardSpace[] BoardSpaces { get; } = boardSpaces;
+    public GameBoard(GameBoardSpace[] boardSpaces)
+    {
+        ArgumentNullException.ThrowIfNull(boardSpaces);
 
+        if (boardSpaces.Length != 9 * 9)
+        {
+            throw new ArgumentException($"Invalid number of board spaces. 81 are required, got {boardSpaces.Length}.");
+        }
+
+        if (GetDuplicateSpaces().Count > 0)
+        {
+            throw new ArgumentException($"Duplicate spaces detected. Found {GetDuplicateSpaces().Count}.");
+        }
+        
+        BoardSpaces = boardSpaces;
+        
+        return;
+
+        Dictionary<(int row, int column), int> GetDuplicateSpaces() =>
+            boardSpaces.GroupBy(space => (space.Row, space.Column))
+                .Where(g => g.Count() > 1)
+                .ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    public GameBoardSpace[] BoardSpaces { get; }
+
+    public GameBoardSpace GetSpace(int row, int column) =>
+        BoardSpaces.Single(space => space.Row == row && space.Column == column);
+    
     public GameBoardSpace[] GetSpacesForRow(int rowNumber) =>
         BoardSpaces
             .Where(space => space.Row == rowNumber)
@@ -36,18 +65,41 @@ public class GameBoard(GameBoardSpace[] boardSpaces)
             .ToArray();
     }
 
-    public bool Verify()
+    public int GetBoxNumber(int row, int column) =>
+        row switch
+        {
+            >= 0 and <= 2 when column is >= 0 and <= 2 => 0,
+            >= 0 and <= 2 when column is >= 3 and <= 5 => 1,
+            >= 0 and <= 2 => 2,
+            >= 3 and <= 5 when column is >= 0 and <= 2 => 3,
+            >= 3 and <= 5 when column is >= 3 and <= 5 => 4,
+            >= 3 and <= 5 => 5,
+            >= 6 and <= 8 when column is >= 0 and <= 2 => 6,
+            >= 6 and <= 8 when column is >= 3 and <= 5 => 7,
+            >= 6 and <= 8 => 8,
+            _ => throw new Exception($"Could not get box number for ({row}, {column})")
+        };
+
+    public GameBoardSpace[] GetUnsolvedSpaces() => BoardSpaces.Where(space => space.Value is null).ToArray();
+
+    public string Print()
     {
-        if (BoardSpaces.Length < 9 * 9)
+        var stringBuilder = new StringBuilder();
+        
+        for (var i = 0; i < 9; i++)
         {
-            return false;
+            var rowValues = GetSpacesForRow(i)
+                .Select(space => space.Value.HasValue ? space.Value.Value.ToString() : "_")
+                .ToArray();
+            
+            stringBuilder.AppendLine(string.Join(' ', rowValues));
         }
-
-        if (BoardSpaces.Any(space => space.Row < 0 || space.Row > 9 || space.Column < 0 || space.Column > 9))
-        {
-            return false;
-        }
-
+        
+        return stringBuilder.ToString();
+    }
+    
+    public bool IsSolved()
+    {
         for (var row = 0; row < 9; row++)
         {
             var boardSpaces = GetSpacesForRow(row);
